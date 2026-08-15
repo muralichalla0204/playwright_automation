@@ -1,33 +1,25 @@
-from playwright.sync_api import expect
-
 from pages.login_page import LoginPage
-from utils.test_data import USERNAME, PASSWORD
+from utils.test_data import (
+    INVALID_PASSWORD,
+    LOCKED_OUT_USER,
+    PASSWORD,
+    USERNAME,
+)
 
 
-from pages.login_page import LoginPage
-from pages.inventory_page import InventoryPage
-from utils.test_data import USERNAME, PASSWORD
-
-def test_add_multiple_products(page):
-
-    # Create page objects
+def test_valid_login(page):
     login = LoginPage(page)
-    inventory = InventoryPage(page)
-
-    # Login
     login.login(USERNAME, PASSWORD)
+    login.verify_login_success()
 
-    # Products to add
-    products = [
-        "sauce-labs-backpack",
-        "sauce-labs-bike-light",
-        "sauce-labs-bolt-t-shirt"
-    ]
 
-    # Add each product
-    for product in products:
-        inventory.add_product_to_cart(product)
-        inventory.verify_remove_button(product)
+def test_locked_out_user_shows_error(page):
+    login = LoginPage(page)
+    login.login(LOCKED_OUT_USER, PASSWORD)
+    login.verify_login_error("Sorry, this user has been locked out.")
 
-    # Verify cart badge
-    inventory.verify_cart_badge(len(products))
+
+def test_invalid_credentials_shows_error(page):
+    login = LoginPage(page)
+    login.login(USERNAME, INVALID_PASSWORD)
+    login.verify_login_error("Username and password do not match")

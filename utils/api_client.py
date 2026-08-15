@@ -1,23 +1,27 @@
 import requests
 
-BASE_URL = "https://reqres.in/api"
+from utils.config_reader import get_api_base_url, get_api_key
 
-HEADERS = {
-    "x-api-key": "free_user_3H4urqHhDSa5KKFXfyB3QVOi2ui"
-}
+
+def _headers():
+    return {"x-api-key": get_api_key()}
 
 
 def get(endpoint):
-    return requests.get(BASE_URL + endpoint, headers=HEADERS)
+    return requests.get(f"{get_api_base_url()}{endpoint}", headers=_headers())
 
 
 def post(endpoint, payload):
-    return requests.post(BASE_URL + endpoint, json=payload, headers=HEADERS)
+    return requests.post(
+        f"{get_api_base_url()}{endpoint}", json=payload, headers=_headers()
+    )
 
 
 def patch(endpoint, payload):
-    return requests.patch(BASE_URL + endpoint, json=payload, headers=HEADERS)
+    return requests.patch(
+        f"{get_api_base_url()}{endpoint}", json=payload, headers=_headers()
+    )
 
 
 def delete(endpoint):
-    return requests.delete(BASE_URL + endpoint, headers=HEADERS)
+    return requests.delete(f"{get_api_base_url()}{endpoint}", headers=_headers())

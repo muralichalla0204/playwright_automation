@@ -1,24 +1,23 @@
-from playwright.sync_api import expect
 from pages.base_page import BasePage
+from utils.config_reader import get_url
 
 
 class CartPage(BasePage):
+    CART_LINK = '[data-test="shopping-cart-link"]'
+    CHECKOUT_BUTTON = '[data-test="checkout"]'
+    ITEM_NAME = '[data-test="inventory-item-name"]'
 
     def __init__(self, page):
         super().__init__(page)
 
     def open_cart(self):
-        self.page.locator('[data-test="shopping-cart-link"]').click()
+        self.click(self.CART_LINK)
 
     def verify_cart_url(self):
-        expect(self.page).to_have_url("https://www.saucedemo.com/cart.html")
-
-    from playwright.sync_api import expect
+        self.verify_url(f"{get_url()}cart.html")
 
     def verify_product_visible(self, product_name):
-        expect(
-        self.page.locator('[data-test="inventory-item-name"]')
-                ).to_have_text(product_name)
+        self.verify_text(self.ITEM_NAME, product_name)
 
     def click_checkout(self):
-        self.page.locator('[data-test="checkout"]').click()
+        self.click(self.CHECKOUT_BUTTON)
