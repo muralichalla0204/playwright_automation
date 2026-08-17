@@ -1,6 +1,10 @@
 name: Automation Tests
 
 on:
+  push:
+    branches:
+      - framework-improvements
+
   workflow_dispatch:
 
 jobs:
