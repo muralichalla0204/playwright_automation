@@ -1,16 +1,15 @@
-from playwright.sync_api import expect
 from pages.base_page import BasePage
+from utils.config_reader import get_url
 
 
 class CheckoutOverviewPage(BasePage):
+    FINISH_BUTTON = '[data-test="finish"]'
 
     def __init__(self, page):
         super().__init__(page)
 
     def verify_overview_page(self):
-        expect(self.page).to_have_url(
-            "https://www.saucedemo.com/checkout-step-two.html"
-        )
+        self.verify_url(f"{get_url()}checkout-step-two.html")
 
     def click_finish(self):
-        self.page.locator('[data-test="finish"]').click()
+        self.click(self.FINISH_BUTTON)

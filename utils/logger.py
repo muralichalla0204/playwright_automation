@@ -1,19 +1,21 @@
 import logging
-import os
+from pathlib import Path
 
-os.makedirs("logs", exist_ok=True)
+PROJECT_ROOT = Path(__file__).resolve().parent.parent
+LOG_DIR = PROJECT_ROOT / "logs"
+LOG_DIR.mkdir(exist_ok=True)
 
 logger = logging.getLogger("PlaywrightFramework")
-
 logger.setLevel(logging.INFO)
 
-file_handler = logging.FileHandler("logs/automation.log")
+formatter = logging.Formatter("%(asctime)s | %(levelname)s | %(message)s")
 
-formatter = logging.Formatter(
-    "%(asctime)s | %(levelname)s | %(message)s"
-)
-
+file_handler = logging.FileHandler(LOG_DIR / "automation.log")
 file_handler.setFormatter(formatter)
+
+console_handler = logging.StreamHandler()
+console_handler.setFormatter(formatter)
 
 if not logger.handlers:
     logger.addHandler(file_handler)
+    logger.addHandler(console_handler)
