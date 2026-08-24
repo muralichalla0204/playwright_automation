@@ -1,0 +1,62 @@
+name: Automation Tests
+
+on:
+  push:
+    branches:
+      - framework-improvements
+
+  workflow_dispatch:
+
+  schedule:
+    # 6:00 AM IST = 00:30 UTC
+    - cron: "30 0 * * *"
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check alternate day
+        id: alternate_day
+        run: |
+          DAY=$(date -u +%j)
+          if [ $((10#$DAY % 2)) -eq 0 ]; then
+            echo "run_tests=true" >> "$GITHUB_OUTPUT"
+            echo "Today is an alternate day. Tests will run."
+          else
+            echo "run_tests=false" >> "$GITHUB_OUTPUT"
+            echo "Today is not an alternate day. Tests will be skipped."
+          fi
+
+      - name: Checkout repository
+        if: steps.alternate_day.outputs.run_tests == 'true' || github.event_name != 'schedule'
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        if: steps.alternate_day.outputs.run_tests == 'true' || github.event_name != 'schedule'
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Install dependencies
+        if: steps.alternate_day.outputs.run_tests == 'true' || github.event_name != 'schedule'
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Install Playwright browsers
+        if: steps.alternate_day.outputs.run_tests == 'true' || github.event_name != 'schedule'
+        run: |
+          playwright install --with-deps
+
+      - name: Run pytest
+        if: steps.alternate_day.outputs.run_tests == 'true' || github.event_name != 'schedule'
+        run: |
+          pytest
+
+      - name: Upload test report
+        if: always() && (steps.alternate_day.outputs.run_tests == 'true' || github.event_name != 'schedule')
+        uses: actions/upload-artifact@v4
+        with:
+          name: pytest-html-report
+          path: reports/report.html

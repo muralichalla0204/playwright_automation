@@ -1,5 +1,6 @@
 from pathlib import Path
 import configparser
+import os
 
 PROJECT_ROOT = Path(__file__).resolve().parent.parent
 CONFIG_PATH = PROJECT_ROOT / "config.ini"
@@ -13,6 +14,9 @@ def get_browser():
 
 
 def get_headless():
+    if os.getenv("CI", "").lower() == "true":
+        return True
+
     return config.getboolean("settings", "headless")
 
 
