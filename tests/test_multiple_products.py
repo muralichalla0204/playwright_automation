@@ -1,6 +1,6 @@
 from pages.inventory_page import InventoryPage
 from utils.test_data import PRODUCTS
-
+#this is to check weather the code still runs after changes taken successfully in jenkins
 
 def test_add_multiple_products(logged_in_page):
     inventory = InventoryPage(logged_in_page)
