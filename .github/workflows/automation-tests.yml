@@ -60,3 +60,4 @@ jobs:
         with:
           name: pytest-html-report
           path: reports/report.html
+# Jenkins Poll SCM test

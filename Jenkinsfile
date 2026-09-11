@@ -1,0 +1,51 @@
+pipeline {
+    agent any
+
+    stages {
+
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
+        }
+
+        stage('Python Version') {
+            steps {
+                bat '"C:\\Users\\ADMIN\\OneDrive\\Desktop\\playwright_automation\\venv\\Scripts\\python.exe" --version'
+            }
+        }
+
+        stage('Install Dependencies') {
+            steps {
+                bat '"C:\\Users\\ADMIN\\OneDrive\\Desktop\\playwright_automation\\venv\\Scripts\\python.exe" -m pip install -r requirements.txt'
+            }
+        }
+
+        stage('Install Playwright Browser') {
+            steps {
+                bat '"C:\\Users\\ADMIN\\OneDrive\\Desktop\\playwright_automation\\venv\\Scripts\\python.exe" -m playwright install chromium'
+            }
+        }
+
+        stage('Run Pytest') {
+            steps {
+                bat '"C:\\Users\\ADMIN\\OneDrive\\Desktop\\playwright_automation\\venv\\Scripts\\python.exe" -m pytest -v'
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'Pipeline execution completed.'
+        }
+
+        success {
+            echo 'All tests passed successfully!'
+        }
+
+        failure {
+            echo 'Pipeline failed. Check the console output.'
+        }
+    }
+}
+
