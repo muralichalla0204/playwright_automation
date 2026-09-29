@@ -25,6 +25,4 @@ class LoginPage(BasePage):
         self.verify_visible(self.INVENTORY_CONTAINER)
         self.verify_url(f"{get_url()}inventory.html")
 
-    def verify_login_error(self, expected_message):
-        self.verify_visible(self.ERROR_MESSAGE)
-        self.verify_contains_text(self.ERROR_MESSAGE, expected_message)
+   
