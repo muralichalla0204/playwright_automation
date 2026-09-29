@@ -1,3 +1,5 @@
+from playwright.sync_api import expect
+
 from pages.base_page import BasePage
 from utils.config_reader import get_url
 
@@ -16,15 +18,28 @@ class LoginPage(BasePage):
         self.open(get_url())
 
     def login(self, username, password):
-        self.open_login_page()
-        self.fill(self.USERNAME_INPUT, username)
-        self.fill(self.PASSWORD_INPUT, password)
-        self.click(self.LOGIN_BUTTON)
+        def action():
+            self.page.goto(get_url(), wait_until="domcontentloaded")
+            self.page.locator(self.USERNAME_INPUT).fill(username)
+            self.page.locator(self.PASSWORD_INPUT).fill(password)
+            self.page.locator(self.LOGIN_BUTTON).click()
+
+        self._run_step("Login", action)
 
     def verify_login_success(self):
         self.verify_visible(self.INVENTORY_CONTAINER)
         self.verify_url(f"{get_url()}inventory.html")
 
+    def verify_login_error(self, expected_text):
+        def action():
+            expect(self.page.locator(self.ERROR_MESSAGE)).to_contain_text(expected_text)
+            expect(self.page).to_have_url(get_url())
+
+        self._run_step("Verify login error", action)
+
     def verify_login_failure(self):
-        self.verify_visible(self.ERROR_MESSAGE)
-        self.verify_url(get_url())
+        def action():
+            expect(self.page.locator(self.ERROR_MESSAGE)).to_be_visible()
+            expect(self.page).to_have_url(get_url())
+
+        self._run_step("Verify login failure", action)
